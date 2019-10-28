@@ -158,4 +158,33 @@ public class Flight {
         this.departureTimeStr = departureTimeStr;
         this.departureTime = LocalTime.parse(departureTimeStr);
     }
+
+
+    public String printFlight() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nId: ");
+        sb.append(getId());
+
+        sb.append("\nFlight Number : ");
+        sb.append(getFlightNumber());
+
+        sb.append("\nDeparture Airport: ");
+        sb.append(getDepartureAirport());
+
+        sb.append("\nArrival Airport: ");
+        sb.append(getArrivalAirport());
+
+        sb.append("\nDeparture Time: ");
+        sb.append(getDepartureTime());
+
+        sb.append("\nDuration in Minutes: ");
+        sb.append(getDurationMinutes());
+
+        sb.append("\nBase Price: ");
+        sb.append(getBasePrice());
+
+        sb.append("\n\n");
+
+        return sb.toString();
+    }
 }

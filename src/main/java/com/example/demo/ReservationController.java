@@ -132,24 +132,47 @@ public class ReservationController {
         return "listsearchresults";
     }
 
-    @PostMapping("/confirmflight")
+    @GetMapping("/confirmflight")
+    public String confirmFlight(@Valid Reservation reservation, BindingResult result,
+                                Model model,
+                                @RequestParam(name="depFlight") Flight depFlight,
+                                // @RequestParam(name="retFlight") Optional<Flight> retFlight,
+                                @RequestParam(name="retFlight") Flight retFlight,
+                                HttpServletRequest request){
+
+        System.out.println("Currently in the get request confirmflight");
+        System.out.println(depFlight.printFlight());
+        System.out.println(retFlight.printFlight());
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("depFlight", depFlight);
+        if (! (retFlight == null)) {
+            model.addAttribute("retFlight", retFlight);
+        }
+        System.out.println("GetMapping");
+        return "redirect:/confirmflight";
+    }
+
+    @RequestMapping(value = "/confirmflight", method = RequestMethod.GET)
     public String confirmflight(@Valid Reservation reservation, BindingResult result,
-//            @ModelAttribute("reservation") Reservation reservation,
-                                     Model model,
-                                     @RequestParam(name="depFlightRadio") Flight depFlight,
-                                     @RequestParam(name="retFlightRadio") Optional<Flight> retFlight,
-                                     HttpServletRequest request){
+//                                      @ModelAttribute("reservation") Reservation reservation,
+                                    Model model,
+                                    @RequestParam(name="depFlight") Flight depFlight,
+                                    //@RequestParam(name="retFlight") Optional<Flight> retFlight,
+                                    @RequestParam(name="retFlight") Flight retFlight,
+                                    HttpServletRequest request){
+        System.out.println("Post request");
         System.out.println("test0bc depdate from valid reservation in confirmflight): " + reservation.getDepartureDate());
 //        Reservation r = (Reservation) request.getAttribute("reservation");
 //        System.out.println("test 0c (depDate from r(=request) in confirmflight): " + r.getDepartureDate());
-        reservation.setDepartureFlight(depFlight);
+        reservation.setDepartureFlight(model.depFlight);
         System.out.println("test 1a (depFlight): " + depFlight.getId());
         System.out.println("test 1b (res.depFlight): " + reservation.getDepartureFlight().getId());
         if(reservation.getIsRoundTrip()==true) {
-            Flight realReturnFlight = retFlight.get();
-            reservation.setReturnFlight(realReturnFlight);
+            //Flight realReturnFlight = retFlight.get();
+            //reservation.setReturnFlight(realReturnFlight);
+            reservation.setReturnFlight(retFlight);
             System.out.println("test 2aa (retFlight.toString): " + retFlight.toString());
-            System.out.println("test 2a (realretFlight): " + realReturnFlight.getId());
+            //System.out.println("test 2a (realretFlight): " + realReturnFlight.getId());
             System.out.println("test 2b (res.realretFlight): " + reservation.getReturnFlight().getId());
         }
         User user = userService.getUser();
@@ -232,16 +255,6 @@ public class ReservationController {
         return "/boardingpass";
     }
 
-    /**
-     * The following Request Mapping is responsible for creating The QR code for a user id and reservation id.
-     * @param model
-     * @param userId
-     * @param reservationId
-     * @return
-     * @throws WriterException
-     * @throws IOException
-     */
-    
     public String createQRCodeURL(Model model,
                                   String userId,
                                   String reservationId)

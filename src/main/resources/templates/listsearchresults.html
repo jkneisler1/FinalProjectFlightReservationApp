@@ -33,7 +33,8 @@
                 </thead>
                 <tbody>
                     <tr th:each="depFlight : ${depFlights}">
-                        <td style="max-width: 130px" class="text-truncate"><label><input type="radio" id="depFlightRadio" th:value="${depFlight.id}" name="depFlightRadio"></label></td>
+                        <!-- <td style="max-width: 130px" class="text-truncate"><label><input type="radio" id="depFlightRadio" th:value="${depFlight.id}" name="depFlightRadio"></label></td> -->
+                        <td style="max-width: 130px" class="text-truncate"><label><input type="radio" id="depFlight" th:value="${depFlight.id}" name="depFlight"></label></td>
                         <td style="max-width: 130px" class="text-truncate" th:text="${depFlight.flightNumber}"></td>
                         <td style="max-width: 130px" class="text-truncate" th:text="${depFlight.departureAirport}"></td></td>
                         <td style="max-width: 130px" class="text-truncate" th:text="${depFlight.arrivalAirport}"></td>
@@ -62,7 +63,8 @@
                     </thead>
                     <tbody>
                     <tr th:each="retFlight : ${retFlights}">
-                        <td style="max-width: 130px" class="text-truncate"><label><input type="radio" id="retFlightRadio" th:value="${retFlight.id}" name="retFlightRadio"></label></td>
+                        <!-- <td style="max-width: 130px" class="text-truncate"><label><input type="radio" id="retFlightRadio" th:value="${retFlight.id}" name="retFlightRadio"></label></td> -->
+                        <td style="max-width: 130px" class="text-truncate"><label><input type="radio" id="retFlight" th:value="${retFlight.id}" name="retFlight"></label></td>
                         <td style="max-width: 130px" class="text-truncate" th:text="${retFlight.flightNumber}"></td>
                         <td style="max-width: 130px" class="text-truncate" th:text="${retFlight.departureAirport}"></td></td>
                         <td style="max-width: 130px" class="text-truncate" th:text="${retFlight.arrivalAirport}"></td>

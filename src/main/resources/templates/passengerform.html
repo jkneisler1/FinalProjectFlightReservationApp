@@ -20,7 +20,7 @@
         </div>
         <br>
         <form th:action="@{/processpassenger}" th:object="${passenger}" method="post">
-            <input type="hidden"  name="id" th:field="${id}">
+            <input type="hidden"  name="id" th:field="${passenger.id}">
             <div class="form-group">
                 <label for="firstName">First Name</label>
                 <input class="form-control" id="firstName" type="text" name="firstName" th:field="${firstName}" />

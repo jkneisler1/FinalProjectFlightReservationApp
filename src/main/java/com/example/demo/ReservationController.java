@@ -113,7 +113,7 @@ public class ReservationController {
 
     @RequestMapping("/listSearchResults")
     public String showSearchResultsForm(HttpServletRequest request,
-                                        Model model){
+                                        Model model) {
 
         Reservation r = (Reservation) request.getAttribute("reservation");
         model.addAttribute("depFlights", request.getAttribute("depFlights"));
@@ -143,85 +143,149 @@ public class ReservationController {
         System.out.println("Currently in the get request confirmflight");
         System.out.println(depFlight.printFlight());
         System.out.println(retFlight.printFlight());
-        model.addAttribute("reservation", reservation);
+        //model.addAttribute("reservation", reservation);
         model.addAttribute("depFlight", depFlight);
-        if (! (retFlight == null)) {
-            model.addAttribute("retFlight", retFlight);
-        }
-        System.out.println("GetMapping");
-        return "redirect:/confirmflight";
-    }
+        model.addAttribute("retFlight", retFlight);
+        // if (! (retFlight == null)) {
+        //    model.addAttribute("retFlight", retFlight);
+        // }
+                    System.out.println("GetMapping");
+        // Adding the post request code
 
-    @RequestMapping(value = "/confirmflight", method = RequestMethod.GET)
-    public String confirmflight(@Valid Reservation reservation, BindingResult result,
-//                                      @ModelAttribute("reservation") Reservation reservation,
-                                    Model model,
-                                    @RequestParam(name="depFlight") Flight depFlight,
-                                    //@RequestParam(name="retFlight") Optional<Flight> retFlight,
-                                    @RequestParam(name="retFlight") Flight retFlight,
-                                    HttpServletRequest request){
-        System.out.println("Post request");
-        System.out.println("test0bc depdate from valid reservation in confirmflight): " + reservation.getDepartureDate());
-//        Reservation r = (Reservation) request.getAttribute("reservation");
-//        System.out.println("test 0c (depDate from r(=request) in confirmflight): " + r.getDepartureDate());
-        reservation.setDepartureFlight(model.depFlight);
-        System.out.println("test 1a (depFlight): " + depFlight.getId());
-        System.out.println("test 1b (res.depFlight): " + reservation.getDepartureFlight().getId());
-        if(reservation.getIsRoundTrip()==true) {
-            //Flight realReturnFlight = retFlight.get();
-            //reservation.setReturnFlight(realReturnFlight);
-            reservation.setReturnFlight(retFlight);
-            System.out.println("test 2aa (retFlight.toString): " + retFlight.toString());
-            //System.out.println("test 2a (realretFlight): " + realReturnFlight.getId());
-            System.out.println("test 2b (res.realretFlight): " + reservation.getReturnFlight().getId());
-        }
+                    System.out.println("Post Code");
         User user = userService.getUser();
         reservation.setUser(user);
-        System.out.println("test 3 (username): " + user.getUsername());
+                    System.out.println("test 3 (username): " + user.getUsername());
         Collection<Passenger> passengers = new ArrayList<>();
         reservation.setPassengers(passengers);
         reservationRepository.save(reservation);
         request.setAttribute("reservation", reservation);
-//        request.setAttribute("passengers", passengers);
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("passengers", passengers);
+                    System.out.println("End post code");
+        // Completed the post request code
+
+
+        // return "redirect:/confirmflight";
+        return "forward:/passengerform";
+    }
+
+    @PostMapping(value = "/confirmflight")
+    public String confirmflight(@Valid Reservation reservation,
+                                @ModelAttribute Flight depFlight,
+                                @ModelAttribute Flight retFlight,
+                                Model model,
+                                    // BindingResult result,
+                                    // @ModelAttribute("reservation") Reservation reservation,
+                                    //Model model,
+                                    //@RequestParam(name="depFlight") Flight depFlight,
+                                    //@RequestParam(name="retFlight") Optional<Flight> retFlight,
+                                    //@RequestParam(name="retFlight") Flight retFlight,
+                                HttpServletRequest request
+                                ) {
+
+                    System.out.println("Post request");
+                    System.out.println("test0bc depdate from valid reservation in confirmflight): " + reservation.getDepartureDate());
+//        Reservation r = (Reservation) request.getAttribute("reservation");
+//        System.out.println("test 0c (depDate from r(=request) in confirmflight): " + r.getDepartureDate());
+        reservation.setDepartureFlight(depFlight);
+                    System.out.println("test 1a (depFlight): " + depFlight.getId());
+                    System.out.println("test 1b (res.depFlight): " + reservation.getDepartureFlight().getId());
+        if(reservation.getIsRoundTrip()==true) {
+            //Flight realReturnFlight = retFlight.get();
+            //reservation.setReturnFlight(realReturnFlight);
+            reservation.setReturnFlight(retFlight);
+                    System.out.println("test 2aa (retFlight.toString): " + retFlight.toString());
+                    //System.out.println("test 2a (realretFlight): " + realReturnFlight.getId());
+                    System.out.println("test 2b (res.realretFlight): " + reservation.getReturnFlight().getId());
+        }
+
+        User user = userService.getUser();
+        reservation.setUser(user);
+                    System.out.println("test 3 (username): " + user.getUsername());
+        // Collection<Passenger> passengers = new ArrayList<>();
+        ArrayList<Passenger> passengers = passengerRepository.findAll();
+        reservation.setPassengers(passengers);
+        reservationRepository.save(reservation);
+
+        request.setAttribute("reservation", reservation);
+        request.setAttribute("passengers", passengers);
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("passengers", passengers);
 
         return "forward:/passengerform";
     }
 
     @RequestMapping("/passengerform")
     public String getPassengerForm(Model model,
-                                   HttpServletRequest request){
+                                   @ModelAttribute Reservation mreservation,
+                                   @ModelAttribute Flight depFlight,
+                                   @ModelAttribute Flight retFlight,
+                                   @ModelAttribute PassengerRepository passengers,
+                                   HttpServletRequest request) {
+                    System.out.println("Started the passenger form");
         Reservation r = (Reservation) request.getAttribute("reservation");
+                    System.out.println("1: passed Reservation r");
         model.addAttribute("reservation", r);
+                    System.out.println("2: passed model add attribute");
         model.addAttribute("passenger", new Passenger());
+                    System.out.println("3: passed new passenger");
         request.setAttribute("reservation", r);
-        System.out.println("test 0d (res.depDate in passengerform): " + r.getDepartureDate());
-        System.out.println("test 4 (res.depFlight in passform): " + r.getDepartureFlight().getId());
+                    System.out.println("4: passed saving Reservation r");
+//                  System.out.println("test 0d (res.depDate in passengerform): " + r.getDepartureDate());
+//                  System.out.println("test 4 (res.depFlight in passform): " + r.getDepartureFlight().getId()); // Got here JK
+//                  System.out.println("test 4 new (res.depFlight in passform): " + r.getDepartureFlight());
+        System.out.println("test 0d (res.depDate in passengerform): " + mreservation.getDepartureDate());
+        //          System.out.println("test 4 (res.depFlight in passform): " + mreservation.getDepartureFlight().getId()); // Got here JK
+        System.out.println("test 4 new (res.depFlight in passform): " + mreservation.getDepartureFlight());
+
+        //return "forward:/processpassenger";
         return "/passengerform";
     }
 
-    @PostMapping("/processpassenger")
-    public String processForm( @Valid Passenger passenger,
-                               BindingResult result,
-                               Model model,
-//                               @ModelAttribute("reservation") Reservation reservation,
-//                               @ModelAttribute("passengers") Collection<Passenger> passengers,
-//                               @ModelAttribute("passenger") Passenger passenger,
-                               @RequestParam(name = "seatNumber") String seatNumber,
-                               HttpServletRequest request){
-        Reservation reservation = (Reservation) request.getAttribute("reservation");
+    //@PostMapping("/processpassenger")
+    @RequestMapping("/processpassenger")
+    public String processForm (
+                        @Valid Passenger passenger,
+                        BindingResult result,
+                        Model model,
+                        @ModelAttribute("reservation") Reservation mreservation,
+                        @ModelAttribute("passengers") Collection<Passenger> passengers,
+                        // @ModelAttribute("passenger") Passenger passenger,
+                        @RequestParam(name = "seatNumber") String seatNumber,
+                        HttpServletRequest request
+    ){
+        //String seatNumber = "6B";
+        passenger.setSeatNumber(seatNumber);
+        System.out.println("First line in process passenter");
+        //Reservation reservation = (Reservation) request.getAttribute("reservation");
+        Reservation reservation = mreservation;
         System.out.println("test 0e (res.depDate in processpassenger): " + reservation.getDepartureDate());
         if(result.hasErrors()) {
             return "passengerform";
         }
-        System.out.println("test 5 (seatNumber in processpass): " + seatNumber);
+        System.out.println("test 5 (seatNumber in processpass): " + passenger.getSeatNumber());
         if(seatNumber.endsWith("A") | seatNumber.endsWith("F")){
                 passenger.setIsWindow(true);
-            } else {
-                passenger.setIsWindow(false);
-            }
-        passenger.setReservation(reservation);
-        reservation.getPassengers().add(passenger);
+        } else {
+            passenger.setIsWindow(false);
+        }
+        System.out.println("Test 6");
+        // passenger.setReservation(reservation);
+        //int i;
+        //for ( passenger : passengerRepository.findAll(); ) {
+        //    i = i + 1;
+        //}
+        //passengerRepository.add(passenger);
+        //long i = passengerRepository.count();
+        //passengerRepository.
+        System.out.println("Test 7");
+                //reservation.getPassengers().add(passenger);
+        System.out.println("Test 8");
+        System.out.println(passenger.getFirstName());
         passengerRepository.save(passenger);
+        // passengerRepository.save(passenger);
+        System.out.println("Test 9");
         if(reservation.getPassengers().size() < reservation.getNumberPassengers()) {
             request.setAttribute("reservation", reservation);
             return "forward:/passengerform";

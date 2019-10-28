@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -92,6 +93,5 @@ public class Passenger {
     public void setIsWindow(boolean window) {
         this.isWindow = isWindow;
     }
-
 
 }
